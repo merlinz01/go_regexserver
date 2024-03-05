@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Regex Test</title>
+        <script>
+function onInputChange() {
+    let matchesdiv = document.getElementById('matches');
+    while (matchesdiv.firstChild) {
+        matchesdiv.removeChild(matchesdiv.lastChild);
+    }      
+    let regex = document.getElementById('regex').value;
+    let text = document.getElementById('text').value;
+    let url = 'http://localhost:9855/api';
+    let data = { Regex: regex, Text: text };
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        let err = document.getElementById('error');
+        if (data.Error !== "") {
+            err.style.display = 'block';
+            err.textContent = data.Error;
+            console.log("Error in API call:", data.Error);
+        } else {
+            err.style.display = 'none';
+            if (data.Matches) {
+                data.Matches.forEach(function(match) {
+                    let newElement = document.createElement("pre");
+                    newElement.textContent = match;
+                    newElement.style.border = "1px solid gray";
+                    newElement.style.margin = "10px 5px";
+                    matchesdiv.appendChild(newElement);
+                });
+            }
+        }
+    })
+    .catch((error) => {
+        let err = document.getElementById('error');
+        err.style.display = 'block';
+        err.textContent = error;
+        console.log("Error in API call:", error);
+    });
+}
+        </script>
+    </head>
+    <body style="display: flex; flex-direction: column;">
+        <h1>Regex Test</h1>
+        <label for="regex">Enter regex:</label>
+        <input type="text" id="regex" name="regex" oninput="onInputChange()">
+        <label for="text">Enter match text:</label>
+        <input type="text" id="text" name="text" oninput="onInputChange()">
+        <span style="color: red; display: none;" id="error"></span>
+        <span style="margin: 20px 10px;">Groups:</span>
+        <div id="matches" style="display: flex; flex-direction: row; color: green;"></div>
+    </body>
+</html>
