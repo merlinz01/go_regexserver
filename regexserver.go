@@ -52,7 +52,7 @@ func (h *RegexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			} else {
 				re, err := regexp.Compile(rdata.Regex)
 				if err != nil {
-					errstr = "Failed to compile regex: " + err.Error()
+					errstr = err.Error()
 				} else {
 					matches = re.FindStringSubmatch(rdata.Text)
 				}
