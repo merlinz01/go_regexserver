@@ -68,5 +68,7 @@ func (h *RegexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			bytes = []byte(`{"Error":"failed to marshal data","Matches":[]}`)
 		}
 		w.Write(bytes)
+		return
 	}
+	w.WriteHeader(http.StatusNotFound)
 }
